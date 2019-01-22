@@ -1,0 +1,775 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+
+<mapper namespace="com.service.dao.db2.DataInfoV2Mapper">
+
+    <!--公共查询条件-->
+    <sql id="Base_Query_List">
+        (
+        ( week>${bdsstartweek} AND week &lt;${bdsendweek} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        or
+        (week>${gpsstartweek} AND week &lt;${gpsendweek} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' )  )
+        or(
+        (week=${bdsstartweek} AND msow >= ${bdsstarttow} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        or
+        (week=${bdsendweek} AND msow &lt;= ${bdsendtow} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ))
+        )
+        or(
+        (week=${gpsstartweek} AND msow >= ${gpsstarttow} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' )  )
+        or
+        (week=${gpsendweek} AND msow &lt;= ${gpsendtow} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        )
+        )
+    </sql>
+    <!--公共查询条件2-->
+    <sql id="Base_Query_List2">
+        (
+        (
+        (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        and
+        (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ))
+        )
+        or(
+        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' )  )
+        and
+        (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        )
+        )
+    </sql>
+
+    <!--messagetype专用-->
+    <sql id="Base_Query_List_Message1">
+        (
+        ( week>${bdsstartweek} AND week &lt;${bdsendweek} AND freqSigID in ( '3','5'  ) )
+        or
+        (week>${gpsstartweek} AND week &lt;${gpsendweek} AND freqSigID in ( '1','2'  )  )
+        or(
+        (week=${bdsstartweek} AND msow >= ${bdsstarttow} AND freqSigID in ( '3','5'  ) )
+        or
+        (week=${bdsendweek} AND msow &lt;= ${bdsendtow} AND freqSigID in ( '3','5'  ))
+        )
+        or(
+        (week=${gpsstartweek} AND msow >= ${gpsstarttow} AND freqSigID in ( '1','2'  )   )
+        or
+        (week=${gpsendweek} AND msow &lt;= ${gpsendtow} AND freqSigID in ( '1','2'  )  )
+        )
+        )
+    </sql>
+
+    <!--messagetype专用2-->
+    <sql id="Base_Query_List_Message1-2">
+        (
+        (
+        (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  ) )
+        and
+        (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  ))
+        )
+        or(
+        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  )   )
+        and
+        (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  )  )
+        )
+        )
+    </sql>
+
+    <sql id="Base_Query_List_Message24">
+        (
+        ( week>${bdsstartweek} AND week &lt;${bdsendweek}  )
+        or
+        (week>${gpsstartweek} AND week &lt;${gpsendweek}   )
+        or(
+        (week=${bdsstartweek} AND msow >= ${bdsstarttow}  )
+        or
+        (week=${bdsendweek} AND msow &lt;= ${bdsendtow} )
+        )
+        or(
+        (week=${gpsstartweek} AND msow >= ${gpsstarttow}  )
+        or
+        (week=${gpsendweek} AND msow &lt;= ${gpsendtow}   )
+        )
+        )
+    </sql>
+    <sql id="Base_Query_List_Message24-2">
+        (
+        (
+        (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT}  )
+        and
+        (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT} )
+        )
+        or(
+        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT}  )
+        and
+        (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT}   )
+        )
+        )
+    </sql>
+    <!--ProcDataByGps-->
+    <sql id="Base_GPS">
+        (
+
+        (week>#{gpsstartweek,jdbcType=SMALLINT} AND week &lt;#{gpsendweek,jdbcType=SMALLINT}  AND freqSigID in ( ${freqsigidString} ) AND recID in ( ${rectypeidByGpsString}) )
+        or
+        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=INTEGER} AND freqSigID in ( ${freqsigidString} ) AND recID in (${rectypeidByGpsString} ) )
+        or
+        (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=INTEGER} AND freqSigID in ( ${freqsigidString} ) AND recID in ( ${rectypeidByGpsString} ) )
+
+        )
+    </sql>
+    <!--ProcDataByBds-->
+    <sql id="Base_BDS">
+        (
+        ( week>#{bdsstartweek,jdbcType=SMALLINT} AND week &lt;#{bdsendweek,jdbcType=SMALLINT} AND freqSigID in ( ${freqsigidString} ) AND recID in ( ${rectypeidByBdsString} ) )
+        or
+        (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=INTEGER} AND freqSigID in ( ${freqsigidString} ) AND recID in ( ${rectypeidByBdsString} ) )
+        or
+        (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=INTEGER} AND freqSigID in ( ${freqsigidString} ) AND recID in ( ${rectypeidByBdsString} ) )
+
+        )
+    </sql>
+    <!--ProcDataByAll-->
+    <sql id="Base_Query_List_All">
+        (
+        ( week>${bdsstartweek} AND week &lt;${bdsendweek} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        or
+        (week>${gpsstartweek} AND week &lt;${gpsendweek} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' )  )
+        or(
+        (week=${bdsstartweek} AND msow >= ${bdsstarttow} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        or
+        (week=${bdsendweek} AND msow &lt;= ${bdsendtow} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ))
+        )
+        or(
+        (week=${gpsstartweek} AND msow >= ${gpsstarttow} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' )  )
+        or
+        (week=${gpsendweek} AND msow &lt;= ${gpsendtow} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        )
+        )
+    </sql>
+    <!--ProcDataByAll2-->
+    <sql id="Base_Query_List_All2">
+        (
+        (
+        (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        and
+        (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ))
+        )
+        or(
+        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' )  )
+        and
+        (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
+        )
+        )
+    </sql>
+
+    <!--XPL-->
+    <sql id="Base_Query_List_Xpl">
+        (
+        ( week>#{bdsstartweek,jdbcType=SMALLINT} AND week &lt;#{bdsendweek,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  )  )
+        or
+        (week>#{gpsstartweek,jdbcType=SMALLINT} AND week &lt;#{gpsendweek,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  ) )
+        or(
+        (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=INTEGER} AND freqSigID in ( '3','5'  )  )
+        or
+        (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=INTEGER} AND freqSigID in ( '3','5'  ) )
+        )
+        or(
+        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=INTEGER} AND freqSigID in ( '1','2'  )  )
+        or
+        (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=INTEGER} AND freqSigID in ( '1','2'  )  )
+        )
+        )
+    </sql>
+    <!--XPL 周相等时-->
+    <sql id="Base_Query_List_Xpl2">
+        (
+        (
+        (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  )  )
+        and
+        (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  ) )
+        )
+        or(
+        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  )  )
+        and
+        (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  )  )
+        )
+        )
+    </sql>
+    <sql id="typePl">
+        SEQID,GBASID,Location,Runway,freqSigID,week,msow,TypePL,PLValue
+
+    </sql>
+
+    <sql id="type">
+        ${type},${type}MinTh,${type}MaxTh,satID,recID,freqSigID,week,msow,MOD(MSOW/1000,60) msowFlag
+
+    </sql>
+    <sql id="typeCNAVG">
+        ${type},satID,recID,freqSigID,week,msow,MOD(MSOW/1000,60) msowFlag
+
+    </sql>
+
+
+    <!--table-->
+    <resultMap id="BaseResultMapTable" type="com.service.model.DataInfo">
+        <!--<id column="table_name" jdbcType="VARCHAR" property="table_name"/>-->
+        <result column="table_name" jdbcType="VARCHAR" property="table_name"/>
+    </resultMap>
+
+    <!--field-->
+    <resultMap id="BaseResultMapField" type="com.service.model.FieldInfo">
+        <!--<id column="table_name" jdbcType="VARCHAR" property="table_name"/>-->
+        <result column="table_name" jdbcType="VARCHAR" property="table_name"/>
+    </resultMap>
+
+    <!--flag-->
+    <resultMap id="BaseResultMapFlag" type="com.service.model.FlagInfo">
+        <!--<id column="table_name" jdbcType="VARCHAR" property="table_name"/>-->
+        <result column="column_name" jdbcType="VARCHAR" property="column_name"/>
+    </resultMap>
+
+    <!--接口2开始-->
+
+    <!--RangeBase-->
+    <resultMap id="BaseResultMapRangeBase" type="com.service.model.DataSearchInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--RangeData-->
+    <resultMap id="BaseResultMapRangeData" type="com.service.model.Rangedata">
+    </resultMap>
+    <!--BDSNavData-->
+    <resultMap id="BaseResultMapBDSNavData" type="com.service.model.Bdsnavdata">
+    </resultMap>
+    <!--Alm-->
+    <resultMap id="BaseResultMapAlm" type="com.service.model.Alm">
+    </resultMap>
+    <!--GbasSeq-->
+    <resultMap id="BaseResultMapGbasSeq" type="com.service.model.GbasSeq">
+    </resultMap>
+    <!--Gpsnavdata-->
+    <resultMap id="BaseResultMapGpsnavdata" type="com.service.model.Gpsnavdata">
+    </resultMap>
+    <!--Messagetype1-->
+    <resultMap id="BaseResultMaptype1" type="com.service.model.Messagetype1">
+    </resultMap>
+    <!--Messagetype2-->
+    <resultMap id="BaseResultMaptype2" type="com.service.model.Messagetype2">
+    </resultMap>
+    <!--Messagetype4-->
+    <resultMap id="BaseResultMaptype4" type="com.service.model.Messagetype4">
+    </resultMap>
+    <!--Procdata-->
+    <resultMap id="BaseResultMapProcdata" type="com.service.model.Procdata">
+    </resultMap>
+    <!--Pvt-->
+    <resultMap id="BaseResultMapPvt" type="com.service.model.Pvt">
+    </resultMap>
+
+
+    <!--接口2结束-->
+
+    <!--ProcDataByGps-->
+    <resultMap id="BaseResultMapProcDataByGps" type="com.service.model.Procdata">
+        <!--<id column="table_name" jdbcType="VARCHAR" property="table_name"/>-->
+        <!--<result column="column_name" jdbcType="VARCHAR" property="column_name"/>-->
+    </resultMap>
+    <!--ProcDataByBds-->
+    <resultMap id="BaseResultMapProcDataByBds" type="com.service.model.Procdata">
+        <!--<id column="table_name" jdbcType="VARCHAR" property="table_name"/>-->
+        <!--<result column="column_name" jdbcType="VARCHAR" property="column_name"/>-->
+    </resultMap>
+
+    <!--接口三-->
+    <!--ProcDataByAll-->
+    <resultMap id="BaseResultMapProcDataByAll" type="com.service.model.Procdata2">
+        <!--<id column="table_name" jdbcType="VARCHAR" property="table_name"/>-->
+        <!--<result column="column_name" jdbcType="VARCHAR" property="column_name"/>-->
+    </resultMap>
+
+    <!--接口4-->
+    <resultMap id="BaseResultMapdatasearchByxpl" type="com.service.model.Xpl">
+    </resultMap>
+
+    <!--接口4  vpl保护级限制-->
+    <resultMap id="BaseResultMapdatasearchByvpl" type="com.service.model.Xpl">
+    </resultMap>
+    <!--接口4 lpl保护级限制-->
+    <resultMap id="BaseResultMapdatasearchBylpl" type="com.service.model.Xpl">
+    </resultMap>
+
+    <!--接口4 VPLDH-->
+    <resultMap id="BaseResultMapdatasearchByvplDH" type="com.service.model.Xpl">
+    </resultMap>
+    <!--接口4 LPLDH-->
+    <resultMap id="BaseResultMapdatasearchBylplDH" type="com.service.model.Xpl">
+    </resultMap>
+
+    <!--source接口-->
+    <resultMap id="BaseResultMapdatasearchBysource" type="com.service.model.SourceInfo">
+    </resultMap>
+    <!--address接口-->
+    <resultMap id="BaseResultMapAddress" type="com.service.model.AddressInfo">
+    </resultMap>
+    <!--AVAILABILITY接口-->
+    <resultMap id="BaseResultMapAvail" type="com.service.model.AvailInfo">
+    </resultMap>
+
+
+    <select id="tableAll" resultMap="BaseResultMapTable" parameterType="String">
+        SELECT table_name
+        <!--<include refid="tableList"/>-->
+        from information_schema.tables
+        where table_schema='GBAS' and table_type='base table'
+    </select>
+
+    <select id="fieldAll" resultMap="BaseResultMapField" >
+        select column_name
+        from information_schema.columns
+        where table_schema='GBAS'
+        AND
+
+        table_name = #{tablename}
+
+    </select>
+
+    <select id="flagAll" resultMap="BaseResultMapFlag" parameterType="String">
+        SELECT column_name
+        from information_schema.columns
+        where table_schema='GBAS' and table_name='ProcData'
+    </select>
+    <select id="addressSearch" resultMap="BaseResultMapAddress">
+        SELECT *
+        from CONTACT
+    </select>
+
+    <!--接口2开始-->
+    <!--RangeBase-->
+    <select id="dataSearchByRangeBase" resultMap="BaseResultMapRangeBase">
+        SELECT *
+        from RangeBase
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List"/>
+
+        </if>
+
+    </select>
+    <!--RangeData-->
+    <select id="dataSearchByRangeData" resultMap="BaseResultMapRangeData">
+        SELECT *
+        from RangeData
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List"/>
+
+        </if>
+
+    </select>
+    <!--BDSNavData-->
+    <select id="dataSearchByBdsnavdata" resultMap="BaseResultMapBDSNavData">
+        SELECT *
+        from BDSNavData
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List"/>
+
+        </if>
+
+
+    </select>
+    <!--ALM-->
+    <select id="dataSearchByALM" resultMap="BaseResultMapAlm">
+        SELECT *
+        from ALM
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List"/>
+
+        </if>
+
+    </select>
+    <!--GBAS_SEQ-->
+    <select id="dataSearchBySEQ" resultMap="BaseResultMapGbasSeq">
+        SELECT *
+        from GBAS_SEQ
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List"/>
+
+        </if>
+
+    </select>
+    <!--GPSNavData-->
+    <select id="dataSearchByGPSnavData" resultMap="BaseResultMapGpsnavdata">
+        SELECT *
+        from GPSNavData
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List"/>
+
+        </if>
+
+    </select>
+    <!--MessageType1-->
+    <select id="dataSearchByType1" resultMap="BaseResultMaptype1">
+        SELECT *
+        from MessageType1
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_Message1-2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_Message1"/>
+
+        </if>
+
+    </select>
+    <!--MessageType2-->
+    <select id="dataSearchByType2" resultMap="BaseResultMaptype2">
+        SELECT *
+        from MessageType2
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_Message24-2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_Message24"/>
+
+        </if>
+
+    </select>
+    <!--MessageType4-->
+    <select id="dataSearchByType4" resultMap="BaseResultMaptype4">
+        SELECT *
+        from MessageType4
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_Message24-2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_Message24"/>
+
+        </if>
+
+    </select>
+    <!--ProcData-->
+    <select id="dataSearchByProcData" resultMap="BaseResultMapProcdata">
+        SELECT *
+        from ProcData
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List"/>
+
+        </if>
+
+    </select>
+    <!--PVT-->
+    <select id="dataSearchByPvt" resultMap="BaseResultMapPvt">
+        SELECT *
+        from PVT
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List"/>
+
+        </if>
+
+    </select>
+
+    <!--接口2结束-->
+
+    <!--ProcDataByGps-->
+    <select id="dataSearchByProcGps" resultMap="BaseResultMapProcDataByGps">
+        SELECT
+        <include refid="type"/>
+        from ProcData
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <include refid="Base_GPS"/>
+
+    </select>
+    <!--ProcDataByBds-->
+    <select id="dataSearchByProcBds" resultMap="BaseResultMapProcDataByBds">
+        <!--SELECT-->
+        <!--<include refid="type"/>-->
+        <!--from(-->
+        SELECT
+        <include refid="type"/>
+        from ProcData
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <include refid="Base_BDS"/>
+
+
+
+    </select>
+
+    <!--dataSearchByProcAll-->
+    <select id="dataSearchByProcAll" resultMap="BaseResultMapProcDataByAll">
+
+
+        SELECT
+        <if test="'CNAVG' == type">
+            <bind name="type" value="_parameter.type" />
+
+            <include refid="typeCNAVG"/>
+        </if>
+        <if test="type != 'CNAVG'">
+            <bind name="type" value="_parameter.type" />
+
+            <include refid="type"/>
+        </if>
+
+        from(
+        SELECT
+        <if test="type == 'CNAVG'">
+            <bind name="type" value="_parameter.type" />
+
+            <include refid="typeCNAVG"/>
+        </if>
+        <if test="type != 'CNAVG'">
+            <bind name="type" value="_parameter.type" />
+
+            <include refid="type"/>
+        </if>
+        from ProcData
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_All2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_All"/>
+
+        </if>
+        ) b WHERE b.msowFlag=0
+
+
+    </select>
+
+    <!--Xpl-->
+    <select id="datasearchByxpl" resultMap="BaseResultMapdatasearchByxpl">
+
+        <!--SELECT-->
+        <!--<include refid="typePl"/>-->
+        <!--from(-->
+        SELECT
+        <include refid="typePl"/>
+        from XPL
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        TYPEPL=#{type}
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_Xpl2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_Xpl"/>
+        </if>
+        and
+        (
+        MOD(substring(LOCATION,4),2) = 1
+        or
+        LOCATION='LTP1.00'
+        )
+        order by
+        cast(substring(Location,4) as SIGNED INTEGER)
+    </select>
+
+    <!--Xpl -vpl限制-->
+    <select id="datasearchByvplLimit" resultMap="BaseResultMapdatasearchByvpl">
+
+        <!--SELECT-->
+        <!--<include refid="typePl"/>-->
+        <!--from(-->
+        SELECT
+        <include refid="typePl"/>
+        from XPL
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        TYPEPL=1
+        and
+        LOCATION='LTP20.00'
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_Xpl2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_Xpl"/>
+        </if>
+
+    </select>
+
+    <!--Xpl -lpl限制-->
+    <select id="datasearchBylplLimit" resultMap="BaseResultMapdatasearchBylpl">
+
+        <!--SELECT-->
+        <!--<include refid="typePl"/>-->
+        <!--from(-->
+        SELECT
+        <include refid="typePl"/>
+        from XPL
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        TYPEPL=2
+        and
+        LOCATION='LTP20.00'
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_Xpl2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_Xpl"/>
+        </if>
+
+    </select>
+
+    <!--Xpl -VPLDH-->
+    <select id="datasearchByvplDH" resultMap="BaseResultMapdatasearchByvplDH">
+
+        <!--SELECT-->
+        <!--<include refid="typePl"/>-->
+        <!--from(-->
+        SELECT
+        <include refid="typePl"/>
+        from XPL
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        TYPEPL=1
+        and
+        LOCATION='DH'
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_Xpl2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_Xpl"/>
+        </if>
+
+    </select>
+
+    <!--Xpl -LPLDH-->
+    <select id="datasearchBylplDH" resultMap="BaseResultMapdatasearchBylplDH">
+
+        <!--SELECT-->
+        <!--<include refid="typePl"/>-->
+        <!--from(-->
+        SELECT
+        <include refid="typePl"/>
+        from XPL
+        where GBASID=#{GBASID,jdbcType=VARCHAR}
+        and
+        TYPEPL=2
+        and
+        LOCATION='DH'
+        and
+        <if test="bdsstartweek == bdsendweek">
+
+            <include refid="Base_Query_List_Xpl2"/>
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+
+            <include refid="Base_Query_List_Xpl"/>
+        </if>
+
+    </select>
+
+    <select id="sourceSearch" resultMap="BaseResultMapdatasearchBysource">
+        SELECT
+        *
+        from RESOURCES
+        where 1=1
+        <if test="keywords != null and keywords != ''">
+            <bind name="keywords" value="'%' + _parameter.keywords + '%'" />
+            AND TITLE LIKE #{keywords}
+        </if>
+        <if test="name != null and name != ''">
+            <bind name="name" value="'%' + _parameter.name + '%'" />
+            AND AUTHOR LIKE #{name}
+
+        </if>
+        order by time desc
+    </select>
+
+    <select id="availabilitySearch" resultMap="BaseResultMapAvail">
+
+       SELECT freqSigID, Runway, Location ,AVG(calcResult) calcResult
+      FROM Availability
+        WHERE GBASID=#{GBASID,jdbcType=VARCHAR}
+        AND
+        currentTime >= str_to_date(#{starttime},'%Y-%m-%d %T')
+        AND
+        currentTime &lt;= str_to_date(#{endtime},'%Y-%m-%d %T')
+        GROUP BY freqSigID,Runway,Location
+    </select>
+
+</mapper>
+
+
