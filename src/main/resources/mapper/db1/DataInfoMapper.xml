@@ -16,7 +16,7 @@
         (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT} AND freqSigID in ( '3','5'  ) AND recID in ( '1' , '2' , '3' , '4' ))
         )
         or(
-        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT}AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' )  )
+        (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' )  )
         or
         (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT} AND freqSigID in ( '1','2'  ) AND recID in ( '1' , '2' , '3' , '4' ) )
         )

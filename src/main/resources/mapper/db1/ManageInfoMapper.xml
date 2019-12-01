@@ -1,0 +1,1431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.service.dao.db1.ManageInfoMapper">
+
+    <!--公共查询条件-->
+    <!--messagetype1、11专用-->
+    <sql id="Base_Query_List_Message1">
+        (
+            (week>#{bdsstartweek,jdbcType=SMALLINT} AND week &lt;#{bdsendweek,jdbcType=SMALLINT} AND freqSigID in ('3','4','5','6','7'))
+                or
+                (week>#{gpsstartweek,jdbcType=SMALLINT} AND week &lt;#{gpsendweek,jdbcType=SMALLINT} AND freqSigID in ('1','2','8'))
+                or (
+                (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT} AND freqSigID in ('3','4','5','6','7'))
+                or
+                (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT} AND freqSigID in ('3','4','5','6','7'))
+                )
+                or (
+                (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT} AND freqSigID in ('1','2','8'))
+                or
+                (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT} AND freqSigID in ('1','2','8'))
+            )
+        )
+    </sql>
+    <!--messagetype1、11专用2-->
+    <sql id="Base_Query_List_Message1-2">
+        (
+            (
+                (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT} AND freqSigID in ('3','4','5','6','7'))
+                    and
+                    (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT} AND freqSigID in ('3','4','5','6','7'))
+                )
+                or (
+                (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT} AND freqSigID in ('1','2','8'))
+                and
+                (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT} AND freqSigID in ('1','2','8'))
+            )
+        )
+    </sql>
+    <!--messagetype2,4专用-->
+    <sql id="Base_Query_List_Message24">
+        (
+            (week>#{bdsstartweek,jdbcType=SMALLINT} AND week &lt;#{bdsendweek,jdbcType=SMALLINT})
+                or
+                (week>#{gpsstartweek,jdbcType=SMALLINT} AND week &lt;#{gpsendweek,jdbcType=SMALLINT})
+                or (
+                (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT})
+                or
+                (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT})
+                )
+                or (
+                (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT})
+                or
+                (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT})
+            )
+        )
+    </sql>
+    <!--messagetype2,4专用2-->
+    <sql id="Base_Query_List_Message24-2">
+        (
+            (
+                (week=#{bdsstartweek,jdbcType=SMALLINT} AND msow >= #{bdsstarttow,jdbcType=SMALLINT})
+                    and
+                    (week=#{bdsendweek,jdbcType=SMALLINT} AND msow &lt;= #{bdsendtow,jdbcType=SMALLINT})
+                )
+                or (
+                (week=#{gpsstartweek,jdbcType=SMALLINT} AND msow >= #{gpsstarttow,jdbcType=SMALLINT})
+                and
+                (week=#{gpsendweek,jdbcType=SMALLINT} AND msow &lt;= #{gpsendtow,jdbcType=SMALLINT})
+            )
+        )
+    </sql>
+    <sql id="typePl">
+        SEQID
+        ,
+        GBASID,
+        Location,
+        Runway,
+        freqSigID,
+        week,
+        msow,
+        TypePL,
+        PLValue
+
+    </sql>
+
+
+    <!--resultmap开始-->
+
+
+    <!--MTInfo-->
+    <resultMap id="BaseResultMapMTInfo" type="com.service.model.MTInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <resultMap id="BaseResultMapMTInfoByFreq" type="com.service.model.MTInfo2">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--VdbInfo-->
+    <resultMap id="BaseResultMapVdbInfo" type="com.service.model.VdbInfo">
+    </resultMap>
+    <!--MTInfoByTime-->
+    <resultMap id="BaseResultMapMTInfoByMessageType" type="com.service.model.MessagetypeAll">
+    </resultMap>
+    <resultMap id="BaseResultMapMTInfoByMessageType1" type="com.service.model.Message1">
+    </resultMap>
+    <resultMap id="BaseResultMapMTInfoByMessageType2" type="com.service.model.Message2">
+    </resultMap>
+    <resultMap id="BaseResultMapMTInfoByMessageType4" type="com.service.model.Message4">
+    </resultMap>
+    <resultMap id="BaseResultMapMTInfoByMessageType11" type="com.service.model.Message11">
+    </resultMap>
+    <!--VdbInfoByMath-->
+    <resultMap id="BaseResultMapVdbInfoByMath" type="com.service.model.SatInfoByMath">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--SatInfo-->
+    <resultMap id="BaseResultMapSatInfo" type="com.service.model.SatInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--SatInfoByMath-->
+    <resultMap id="BaseResultMapSatInfoByMath" type="com.service.model.SatInfoByMath">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--satInfoByTreble-->
+    <resultMap id="BaseResultMapSatInfoByTreble" type="com.service.model.SatInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+
+    <!--AprdevInfo-->
+    <resultMap id="BaseResultMapAprdevInfo" type="com.service.model.AprdevInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--AprdevInfoByOver-->
+    <resultMap id="BaseResultMapAprdevInfoByOver" type="com.service.model.AprdevInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--PvtInfo-->
+    <resultMap id="BaseResultMapPvtInfo" type="com.service.model.PvtInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <resultMap id="BaseResultMapPvtInfoByMath" type="com.service.model.SatInfoByMath">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--TBDInfo-->
+    <resultMap id="BaseResultMapTBDInfo" type="com.service.model.SatInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <resultMap id="BaseResultMapTBDInfoByGNSS" type="com.service.model.TotalInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--SysInfo-->
+    <resultMap id="BaseResultMapSysInfo" type="com.service.model.SysInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <!--ConfigInfo-->
+    <resultMap id="BaseResultMapConfigManage" type="com.service.model.ConfigInfo">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+    <resultMap id="BaseResultMapConfigManage2" type="com.service.model.ConfigInfo2">
+        <!--<result column="SEQID" jdbcType="INTEGER" property="seqid"/>-->
+    </resultMap>
+
+    <!--resultmap结束-->
+
+    <!--MTInfoByReality-->
+    <select id="MTInfoByReality" resultMap="BaseResultMapMTInfo">
+
+
+        SELECT
+        count(*) AS
+        total
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+        </if>
+
+        <if test="bdsstartweek == bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1-2"/>
+                AND
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24-2"/>
+                AND
+            </if>
+
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1"/>
+                AND
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24"/>
+                AND
+            </if>
+
+        </if>
+
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            numOfMeasurements &lt; = 1
+            AND
+        </if>
+
+        1=1
+
+    </select>
+
+    <!--MTInfoByReality-->
+    <select id="MTInfoByRealityPath" resultMap="BaseResultMapMTInfo">
+
+
+        SELECT
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            sum(numOfMeasurements) AS
+            total3,
+        </if>
+        <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+            0 AS
+            total3,
+        </if>
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            count(*) AS
+            total2
+        </if>
+        <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+            0 AS
+            total2
+        </if>
+
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+        </if>
+        <if test="bdsstartweek == bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1-2"/>
+                AND
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24-2"/>
+                AND
+            </if>
+
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1"/>
+                AND
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24"/>
+                AND
+            </if>
+
+        </if>
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            numOfMeasurements > 1
+            AND
+        </if>
+        1=1
+    </select>
+    <!--MTInfoByError-->
+    <select id="MTInfoByError" resultMap="BaseResultMapMTInfo">
+
+        SELECT
+        count(*) AS
+        total
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+
+        </if>
+
+        <if test="bdsstartweek == bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1-2"/>
+                AND
+
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24-2"/>
+                AND
+
+            </if>
+
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1"/>
+                AND
+
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24"/>
+                AND
+
+            </if>
+
+        </if>
+        CRCSuccess = 0
+
+    </select>
+
+    <!--MTInfoByTimeSlot-->
+    <select id="MTInfoByTimeSlot" resultMap="BaseResultMapMTInfo">
+
+        select count(*) AS total
+        ,
+        TIMESLOT
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+
+        </if>
+        <if test="bdsstartweek == bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1-2"/>
+
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24-2"/>
+
+            </if>
+
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1"/>
+
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24"/>
+
+            </if>
+
+        </if>
+        group by TIMESLOT
+
+    </select>
+    <!--MTInfoByPre-->
+    <select id="MTInfoByPre1" resultMap="BaseResultMapConfigManage2">
+
+        select PARAMVALUE as MT1TINT
+        from
+            CONFIG
+        where PARAMNAME = 'TYPE1TINTV'
+
+    </select>
+    <select id="MTInfoByPre2" resultMap="BaseResultMapConfigManage2">
+
+        select PARAMVALUE as MT2TINT
+        from
+            CONFIG
+        where PARAMNAME = 'TYPE2TINTV'
+
+    </select>
+    <select id="MTInfoByPre4" resultMap="BaseResultMapConfigManage2">
+
+        select PARAMVALUE as MT4TINT
+        from
+            CONFIG
+        where PARAMNAME = 'TYPE4TINTV'
+
+    </select>
+    <select id="MTInfoByPre11" resultMap="BaseResultMapConfigManage2">
+
+        select PARAMVALUE as MT11TINT
+        from
+            CONFIG
+        where PARAMNAME = 'TYPE11TINTV'
+
+    </select>
+
+    <!--MTInfoByFreq-->
+    <select id="MTInfoByFreq" resultMap="BaseResultMapMTInfoByFreq">
+
+        select count(*) AS total
+        ,
+        freqSigID
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+
+        </if>
+
+        <if test="bdsstartweek == bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1-2"/>
+
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24-2"/>
+
+            </if>
+
+        </if>
+        <if test="bdsstartweek != bdsendweek">
+            <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+                <include refid="Base_Query_List_Message1"/>
+
+            </if>
+            <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+                <include refid="Base_Query_List_Message24"/>
+            </if>
+
+        </if>
+        AND 1=1
+        group by freqSigID
+
+    </select>
+    <!--MTInfoByTime-->
+    <select id="MTInfoByTime" resultMap="BaseResultMapMTInfoByMessageType">
+        SELECT *
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+
+        </if>
+        CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+        AND
+        CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+
+    </select>
+    <select id="MTInfoBycurrentTime1" resultMap="BaseResultMapMTInfoByMessageType1">
+        SELECT *
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+
+        </if>
+        CURRENTTIME = to_date(#{currentTime}, 'yyyy-mm-dd hh24:mi:ss')
+
+    </select>
+    <select id="MTInfoBycurrentTime2" resultMap="BaseResultMapMTInfoByMessageType2">
+        SELECT *
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+
+        </if>
+        CURRENTTIME = to_date(#{currentTime}, 'yyyy-mm-dd hh24:mi:ss')
+
+    </select>
+    <select id="MTInfoBycurrentTime4" resultMap="BaseResultMapMTInfoByMessageType4">
+        SELECT *
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+
+        </if>
+        CURRENTTIME = to_date(#{currentTime}, 'yyyy-mm-dd hh24:mi:ss')
+
+    </select>
+    <select id="MTInfoBycurrentTime11" resultMap="BaseResultMapMTInfoByMessageType11">
+        SELECT *
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+
+        </if>
+        CURRENTTIME = to_date(#{currentTime}, 'yyyy-mm-dd hh24:mi:ss')
+
+    </select>
+
+
+    <!--MTInfoByReality-->
+    <select id="MTInfoByTimeReality" resultMap="BaseResultMapMTInfo">
+
+
+        SELECT
+        count(*) AS
+        total
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+        </if>
+
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            numOfMeasurements &lt; = 1
+            AND
+        </if>
+
+        1=1
+        AND CURRENTTIME = to_date(#{currentTime}, 'yyyy-mm-dd hh24:mi:ss')
+
+    </select>
+
+    <!--MTInfoByReality-->
+    <select id="MTInfoByTimeRealityPath" resultMap="BaseResultMapMTInfo">
+
+        SELECT
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            sum(numOfMeasurements) AS
+            total3,
+        </if>
+        <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+            0 AS
+            total3,
+        </if>
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            count(*) AS
+            total2
+        </if>
+        <if test='messageType == "MESSAGETYPE2" or messageType == "MESSAGETYPE4"'>
+            0 AS
+            total2
+        </if>
+
+        from ${messageType}
+        where
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            freqSigID IN (${freqSigID})
+            AND
+        </if>
+
+        <if test='messageType == "MESSAGETYPE1" or messageType == "MESSAGETYPE11"'>
+            numOfMeasurements > 1
+            AND
+        </if>
+        1=1
+        AND
+        CURRENTTIME = to_date(#{currentTime}, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+
+    <!--3.1结束-->
+    <!--VdbInfo-->
+    <select id="vdbInfo" resultMap="BaseResultMapVdbInfo">
+        SELECT Polarization,strength,currentTime
+        from VDBINFO
+        where
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+
+    </select>
+    <!--VdbInfoByMath-->
+    <select id="vdbInfoByMath" resultMap="BaseResultMapVdbInfoByMath">
+
+        select count(*)
+               AS
+               count,
+               max(
+               total) AS
+               max,
+               min(
+               total) AS
+               min,
+               avg(
+               total) AS
+               avg,
+               sum(
+               total) AS
+               sum,
+               STDDEV (
+               total) AS
+               STDDEV,
+               median(
+               total) AS
+               median,
+               PERCENTILE_CONT(
+               0.95)
+               within
+        group (order by total) as max_sal_95,
+               PERCENTILE_CONT(0.99) within
+        group (order by total) as max_sal_99
+        from
+            (SELECT
+             strength AS
+             total
+             from
+             VDBINFO
+             where
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+            )
+             foo
+
+    </select>
+
+    <!--satInfoByElevation-->
+    <select id="satInfoByElevation" resultMap="BaseResultMapSatInfo">
+        SELECT freqSigID,
+               B1,
+               B2,
+               B3,
+               B4,
+               satID,
+               elevation,
+               sigma_pr_gnd,
+               sigma_pr_gnd_D,
+               sigma_pr_gnd_30,
+               recTypeID,
+               recID,
+               currentTime
+        from SATINFO
+        where
+            freqSigID IN (${freqSigID})
+          AND
+            recTypeID IN (${recTypeID})
+          AND
+            recID IN (${recID})
+          AND
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+
+
+    </select>
+
+    <!--satInfoByTime-->
+    <select id="satInfoByTime" resultMap="BaseResultMapSatInfo">
+        SELECT freqSigID,
+               B1,
+               B2,
+               B3,
+               B4,
+               elevation,
+               sigma_pr_gnd,
+               sigma_pr_gnd_D,
+               sigma_pr_gnd_30,
+               satID,
+               currentTime
+        from SATINFO
+        where
+            freqSigID IN (${freqSigID})
+          AND
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+    <!--SatInfoByMath-->
+    <select id="satInfoByTimeMath" resultMap="BaseResultMapSatInfoByMath">
+
+        select count(*)
+               AS
+               count,
+               max(
+               total) AS
+               max,
+               min(
+               total) AS
+               min,
+               avg(
+               total) AS
+               avg,
+               sum(
+               total) AS
+               sum,
+               STDDEV (
+               total) AS
+               STDDEV,
+               median(
+               total) AS
+               median,
+               PERCENTILE_CONT(
+               0.95)
+               within
+        group (order by total) as max_sal_95,
+               PERCENTILE_CONT(0.99) within
+        group (order by total) as max_sal_99
+        from
+            (SELECT
+             B1 AS
+             total
+             from
+             SATINFO
+             where
+             freqSigID
+             IN (
+             ${freqSigID})
+
+
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             B2 AS
+             total
+             from
+             SATINFO
+             where
+             freqSigID
+             IN (
+             ${freqSigID})
+
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             B3 AS
+             total
+             from
+             SATINFO
+             where
+             freqSigID
+             IN (
+             ${freqSigID})
+
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             B4 AS
+             total
+             from
+             SATINFO
+             where
+             freqSigID
+             IN (
+             ${freqSigID})
+
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             sigma_pr_gnd AS
+             total
+             from
+             SATINFO
+             where
+             freqSigID
+             IN (
+             ${freqSigID})
+
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             sigma_pr_gnd_D AS
+             total
+             from
+             SATINFO
+             where
+             freqSigID
+             IN (
+             ${freqSigID})
+
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             sigma_pr_gnd_30 AS
+             total
+             from
+             SATINFO
+             where
+             freqSigID
+             IN (
+             ${freqSigID})
+
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+            )
+             foo
+
+    </select>
+    <!--satInfoByTime-->
+    <select id="satInfoByTreble" resultMap="BaseResultMapSatInfoByTreble">
+        SELECT freqSigID,
+               B1,
+               B2,
+               B3,
+               B4,
+               elevation,
+               sigma_pr_gnd,
+               satID,
+               currentTime
+        from SATINFO
+        where
+            (B1 > sigma_pr_gnd * 3 or B2 > sigma_pr_gnd * 3 or B3 > sigma_pr_gnd * 3 or B4 > sigma_pr_gnd * 3)
+          AND
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+    <select id="satInfoByTrebleD" resultMap="BaseResultMapSatInfoByTreble">
+        SELECT freqSigID,
+               B1,
+               B2,
+               B3,
+               B4,
+               elevation,
+               sigma_pr_gnd_D,
+               satID,
+               currentTime
+        from SATINFO
+        where
+            (B1 > sigma_pr_gnd_D * 3 or B2 > sigma_pr_gnd_D * 3 or B3 > sigma_pr_gnd_D * 3 or B4 > sigma_pr_gnd_D * 3)
+          AND
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+    <select id="satInfoByTreble30" resultMap="BaseResultMapSatInfoByTreble">
+        SELECT freqSigID,
+               B1,
+               B2,
+               B3,
+               B4,
+               elevation,
+               sigma_pr_gnd_30,
+               satID,
+               currentTime
+        from SATINFO
+        where
+            (B1 > sigma_pr_gnd_30 * 3 or B2 > sigma_pr_gnd_30 * 3 or B3 > sigma_pr_gnd_30 * 3 or
+             B4 > sigma_pr_gnd_30 * 3)
+          AND
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+    <!--AprdevInfo-->
+    <select id="aprdevInfo" resultMap="BaseResultMapAprdevInfo">
+        SELECT lpl,
+               lal,
+               vpl,
+               val,
+               posMode,
+               freqSigID,
+               gast,
+               currentTime
+        from APRDEV
+        where posMode = #{posMode}
+          AND
+            freqSigID IN (${freqSigID})
+          AND
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+    <!--aprdevInfoByMath-->
+    <select id="aprdevInfoByMath" resultMap="BaseResultMapSatInfoByMath">
+
+        select count(*) / 4
+               AS
+               count,
+               max(
+               total) AS
+               max,
+               min(
+               total) AS
+               min,
+               avg(
+               total) AS
+               avg,
+               sum(
+               total) AS
+               sum,
+               STDDEV (
+               total) AS
+               STDDEV,
+               median(
+               total) AS
+               median,
+               PERCENTILE_CONT(
+               0.95)
+               within
+        group (order by total) as max_sal_95,
+               PERCENTILE_CONT(0.99) within
+        group (order by total) as max_sal_99
+        from
+            (SELECT
+             lpl AS
+             total
+             from
+             APRDEV
+             where
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             lal AS
+             total
+             from
+             APRDEV
+             where
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             vpl AS
+             total
+             from
+             APRDEV
+             where
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+             union
+             all
+             select
+             val AS
+             total
+             from
+             APRDEV
+             where
+
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+            )
+             foo
+    </select>
+    <select id="aprdevInfoByOverlal" resultMap="BaseResultMapAprdevInfoByOver">
+        SELECT lpl,
+               lal,
+               posMode,
+               freqSigID,
+               gast,
+               currentTime
+        from APRDEV
+        where
+            (lpl > lal)
+          AND
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+    <select id="aprdevInfoByOverval" resultMap="BaseResultMapAprdevInfoByOver">
+        SELECT
+            vpl,
+            val,
+            posMode,
+            freqSigID,
+            gast,
+            currentTime
+        from APRDEV
+        where
+            (vpl > val)
+          AND
+            CURRENTTIME > to_date(#{starttime}, 'yyyy-mm-dd hh24:mi:ss')
+          AND
+            CURRENTTIME &lt; to_date(#{endtime}, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+
+    <!--PvtInfo-->
+    <select id="PvtInfo" resultMap="BaseResultMapPvtInfo">
+        SELECT
+            posMode,
+            freqSigID,
+            currentTime,
+            ellHeight,
+            LAMBDA_C,
+            PHI_C
+        from
+            PVT
+        where
+                posMode =
+                #{posMode}
+          AND
+                freqSigID
+                IN (
+                    ${freqSigID})
+          AND
+                CURRENTTIME
+                >
+                to_date(
+                        #{starttime},
+                        'yyyy-mm-dd hh24:mi:ss')
+          AND
+                CURRENTTIME
+                &lt;
+                to_date(
+                        #{endtime},
+                        'yyyy-mm-dd hh24:mi:ss')
+
+    </select>
+    <select id="PvtInfoByMathH" resultMap="BaseResultMapPvtInfoByMath">
+        select
+            count(*)
+            AS
+            count,
+            max(
+            total1) AS
+            max,
+            min(
+            total1) AS
+            min,
+            avg(
+            total1) AS
+            avg,
+            sum(
+            total1) AS
+            sum,
+            STDDEV (
+            total1) AS
+            STDDEV,
+            median(
+            total1) AS
+            median,
+            PERCENTILE_CONT(
+            0.95)
+            within
+        group (order by total1) as max_sal_95,
+               PERCENTILE_CONT(0.99) within
+        group (order by total1) as max_sal_99
+        from
+            (SELECT
+             posMode,
+             freqSigID,
+             currentTime,
+             ellHeight as
+             total1,
+             LAMBDA_C as
+             total2,
+             PHI_C as
+             total3
+             from
+             PVT
+             where
+             posMode =
+             #{posMode}
+             AND
+             freqSigID
+             IN (
+             ${freqSigID})
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+            )
+             foo
+    </select>
+    <select id="PvtInfoByMathLC" resultMap="BaseResultMapPvtInfoByMath">
+        select
+            count(*)
+            AS
+            count,
+            max(
+            total2) AS
+            max,
+            min(
+            total2) AS
+            min,
+            avg(
+            total2) AS
+            avg,
+            sum(
+            total2) AS
+            sum,
+            STDDEV (
+            total2) AS
+            STDDEV,
+            median(
+            total2) AS
+            median,
+            PERCENTILE_CONT(
+            0.95)
+            within
+        group (order by total2) as max_sal_95,
+               PERCENTILE_CONT(0.99) within
+        group (order by total2) as max_sal_99
+        from
+            (SELECT
+             posMode,
+             freqSigID,
+             CURRENTTIME,
+             ellHeight as
+             total1,
+             LAMBDA_C as
+             total2,
+             PHI_C as
+             total3
+             from
+             PVT
+             where
+             posMode =
+             #{posMode}
+             AND
+             freqSigID
+             IN (
+             ${freqSigID})
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+            )
+             foo
+    </select>
+    <select id="PvtInfoByMathPC" resultMap="BaseResultMapPvtInfoByMath">
+        select
+            count(*)
+            AS
+            count,
+            max(
+            total3) AS
+            max,
+            min(
+            total3) AS
+            min,
+            avg(
+            total3) AS
+            avg,
+            sum(
+            total3) AS
+            sum,
+            STDDEV (
+            total3) AS
+            STDDEV,
+            median(
+            total3) AS
+            median,
+            PERCENTILE_CONT(
+            0.95)
+            within
+        group (order by total3) as max_sal_95,
+               PERCENTILE_CONT(0.99) within
+        group (order by total3) as max_sal_99
+        from
+            (SELECT
+             posMode,
+             freqSigID,
+             currentTime,
+             ellHeight as
+             total1,
+             LAMBDA_C as
+             total2,
+             PHI_C as
+             total3
+             from
+             PVT
+             where
+             posMode =
+             #{posMode}
+             AND
+             freqSigID
+             IN (
+             ${freqSigID})
+             AND
+             CURRENTTIME
+             >
+             to_date(
+             #{starttime},
+             'yyyy-mm-dd hh24:mi:ss')
+             AND
+             CURRENTTIME
+             &lt;
+             to_date(
+             #{endtime},
+             'yyyy-mm-dd hh24:mi:ss')
+            )
+             foo
+    </select>
+    <!--TBDInfo-->
+    <select id="TBDInfoByFreqSigID" resultMap="BaseResultMapTBDInfo">
+        SELECT *
+        from SATINFO
+        where
+            freqSigID IN (${freqSigID})
+          AND
+                CURRENTTIME > to_date(#{starttime}
+                , 'yyyy-mm-dd hh24:mi:ss')
+          AND
+                CURRENTTIME &lt; to_date(#{endtime}
+                , 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+    <select id="TBDInfoByGNSS" resultMap="BaseResultMapTBDInfoByGNSS">
+
+        select currentTime
+        from (SELECT currentTime
+              from RANGEDATA
+              where
+                      CURRENTTIME > to_date(#{starttime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+                AND
+                      CURRENTTIME &lt; to_date(#{endtime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+              union all
+              SELECT currentTime
+              from SATINFO
+              where
+                      CURRENTTIME > to_date(#{starttime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+                AND
+                      CURRENTTIME &lt; to_date(#{endtime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+             )
+
+    </select>
+    <select id="TBDInfoByVDB" resultMap="BaseResultMapTBDInfoByGNSS">
+
+        select currentTime
+        from (SELECT currentTime
+              from VDBINFO
+              where
+                      CURRENTTIME > to_date(#{starttime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+                AND
+                      CURRENTTIME &lt; to_date(#{endtime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+              union all
+              SELECT currentTime
+              from MESSAGETYPE1
+              where
+                      CURRENTTIME > to_date(#{starttime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+                AND
+                      CURRENTTIME &lt; to_date(#{endtime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+              union all
+              SELECT currentTime
+              from MESSAGETYPE2
+              where
+                      CURRENTTIME > to_date(#{starttime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+                AND
+                      CURRENTTIME &lt; to_date(#{endtime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+              union all
+              SELECT currentTime
+              from MESSAGETYPE4
+              where
+                      CURRENTTIME > to_date(#{starttime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+                AND
+                      CURRENTTIME &lt; to_date(#{endtime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+              union all
+              SELECT currentTime
+              from MESSAGETYPE11
+              where
+                      CURRENTTIME > to_date(#{starttime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+                AND
+                      CURRENTTIME &lt; to_date(#{endtime}
+                      , 'yyyy-mm-dd hh24:mi:ss')
+             )
+
+    </select>
+
+    <!--SysInfo-->
+    <select id="TestRecInfo" resultMap="BaseResultMapSysInfo">
+        SELECT *
+        from SYSINFO
+        where
+                CURRENTTIME > to_date(#{starttime}
+                , 'yyyy-mm-dd hh24:mi:ss')
+          AND
+                CURRENTTIME &lt; to_date(#{endtime}
+                , 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+
+    <!--configManage-->
+    <select id="configManage" resultMap="BaseResultMapConfigManage">
+        SELECT *
+        from CONFIG
+        order by
+            currentTime desc
+    </select>
+    <update id="configUpdate" parameterType="com.service.model.ConfigInfo">
+        UPDATE CONFIG
+        <trim prefix="set" suffixOverrides=",">
+            <if test="PARAMNAME!=null">PARAMNAME=#{PARAMNAME},</if>
+            <if test="PARAMVALUE!=null">PARAMVALUE=#{PARAMVALUE},</if>
+            <if test="PARAMNOTE!=null">PARAMNOTE=#{PARAMNOTE},</if>
+            currentTime= GETDATE()
+        </trim>
+        WHERE SEQID=#{SEQID}
+    </update>
+
+    <insert id="configAdd" parameterType="com.service.model.ConfigInfo">
+        INSERT INTO CONFIG(PARAMNAME, PARAMVALUE, PARAMNOTE, currentTime)
+        values
+            (#{PARAMNAME}, #{PARAMVALUE}, #{PARAMNOTE}, GETDATE())
+    </insert>
+
+</mapper>
+
+

@@ -98,7 +98,7 @@ public class Messagetype1 {
     private BigDecimal freqsigid;
 
     @Column(name = "CRC")
-    private Short crc;
+    private BigDecimal crc;
 
     @Column(name = "currentTime")
     private String currenttime;
@@ -428,14 +428,14 @@ public class Messagetype1 {
     /**
      * @return CRC
      */
-    public Short getCrc() {
+    public BigDecimal getCrc() {
         return crc;
     }
 
     /**
      * @param crc
      */
-    public void setCrc(Short crc) {
+    public void setCrc(BigDecimal crc) {
         this.crc = crc;
     }
 
